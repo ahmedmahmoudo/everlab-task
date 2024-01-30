@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Diagnostic {
+  id                Int                @id @default(autoincrement())
+  name              String
+  diagnosticGroup   DiagnosticGroup    @relation(fields: [diagnosticGroupId], references: [id])
+  diagnosticGroupId Int
+  diagnosticMetrics DiganosticMetric[]
+}
+
+model DiganosticMetric {
+  id              Int         @id @default(autoincrement())
+  name            String
+  oru_sonic_codes String?
+  oru_sonic_units String?
+  min_age         Int?
+  max_age         Int?
+  gender          String?
+  standard_lower  Float?
+  standard_higher Float?
+  everlab_lower   Float?
+  everlab_higher  Float?
+  diagnostic      Diagnostic? @relation(fields: [diagnosticId], references: [id])
+  diagnosticId    Int?
+  condition       Condition[]
+}
+
+model DiagnosticGroup {
+  id          Int          @id @default(autoincrement())
+  name        String
+  diagnostics Diagnostic[]
+}
+
+model Condition {
+  id                Int                @id @default(autoincrement())
+  name              String
+  diagnosticMetrics DiganosticMetric[]
+}
